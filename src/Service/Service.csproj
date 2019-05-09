@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Prices.Service</AssemblyName>
+    <RootNamespace>Prices</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PipServices3.Commons" Version="3.0.10" />
+    <PackageReference Include="PipServices3.Container" Version="3.0.3" />
+    <PackageReference Include="PipServices3.Data" Version="3.0.2" />
+    <PackageReference Include="PipServices3.MongoDb" Version="3.0.4" />
+    <PackageReference Include="PipServices3.Rpc" Version="3.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Interface\Interface.csproj" />
+  </ItemGroup>
+
+</Project>
