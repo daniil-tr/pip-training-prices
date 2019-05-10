@@ -25,22 +25,38 @@ namespace Prices.Persistence
             var productId = filterParams.GetAsNullableString("product_id");
             var partId = filterParams.GetAsNullableString("part_id");
             var sku = filterParams.GetAsNullableString("sku");
-            var dateStart = filterParams.GetAsNullableDateTime("date_start");
-            var dateEnd = filterParams.GetAsNullableDateTime("date_end");
+            var fromDateStart = filterParams.GetAsNullableDateTime("from_date_start");
+            var toDateStart = filterParams.GetAsNullableDateTime("to_date_start");
+            var fromDateEnd = filterParams.GetAsNullableDateTime("from_date_end");
+            var toDateEnd = filterParams.GetAsNullableDateTime("to_date_end");
             var promoCode = filterParams.GetAsNullableString("promo_code");
             var skus = filterParams.GetAsNullableString("skus");
-            var skuList = !string.IsNullOrEmpty(skus) ? skus.Split(',') : null;
+            var skuList = !string.IsNullOrWhiteSpace(skus) ? skus.Split(',') : null;
+            var search = filterParams.GetAsNullableString("search");
 
-            if (!string.IsNullOrEmpty(id)) filter &= builder.Eq(b => b.Id, id);
-            if (!string.IsNullOrEmpty(pricefileId)) filter &= builder.Eq(b => b.PriceFileId, pricefileId);
-            if (!string.IsNullOrEmpty(externalRefId)) filter &= builder.Eq(b => b.ExternalRefId, externalRefId);
-            if (!string.IsNullOrEmpty(productId)) filter &= builder.Eq(b => b.ProductId, productId);
-            if (!string.IsNullOrEmpty(partId)) filter &= builder.Eq(b => b.PartId, partId);
-            if (!string.IsNullOrEmpty(sku)) filter &= builder.Eq(b => b.Sku, sku);
-            if (dateStart.HasValue) filter &= builder.Eq(b => b.DateStart, dateStart.Value);
-            if (dateEnd.HasValue) filter &= builder.Eq(b => b.DateEnd, dateEnd.Value);
-            if (!string.IsNullOrEmpty(promoCode)) filter &= builder.Eq(b => b.PromoCode, promoCode);
+            if (!string.IsNullOrWhiteSpace(id)) filter &= builder.Eq(b => b.Id, id);
+            if (!string.IsNullOrWhiteSpace(pricefileId)) filter &= builder.Eq(b => b.PriceFileId, pricefileId);
+            if (!string.IsNullOrWhiteSpace(externalRefId)) filter &= builder.Eq(b => b.ExternalRefId, externalRefId);
+            if (!string.IsNullOrWhiteSpace(productId)) filter &= builder.Eq(b => b.ProductId, productId);
+            if (!string.IsNullOrWhiteSpace(partId)) filter &= builder.Eq(b => b.PartId, partId);
+            if (!string.IsNullOrWhiteSpace(sku)) filter &= builder.Eq(b => b.Sku, sku);
+            if (fromDateStart.HasValue) filter &= builder.Gte(b => b.DateStart, fromDateStart);
+            if (toDateStart.HasValue) filter &= builder.Lte(b => b.DateStart, toDateStart);
+            if (fromDateEnd.HasValue) filter &= builder.Gte(b => b.DateEnd, fromDateEnd);
+            if (toDateEnd.HasValue) filter &= builder.Lte(b => b.DateEnd, toDateEnd);
+            if (!string.IsNullOrWhiteSpace(promoCode)) filter &= builder.Eq(b => b.PromoCode, promoCode);
             if (skuList != null) filter &= builder.In(b => b.Sku, skuList);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchFilter = builder.Eq(b => b.Id, search);
+                searchFilter |= builder.Eq(b => b.PriceFileId, search);
+                searchFilter |= builder.Eq(b => b.ProductId, search);
+                searchFilter |= builder.Eq(b => b.PartId, search);
+                searchFilter |= builder.Eq(b => b.ExternalRefId, search);
+                searchFilter |= builder.Eq(b => b.Sku, search);
+                searchFilter |= builder.Eq(b => b.PromoCode, search);
+                filter &= searchFilter;
+            }
 
             return filter;
         }

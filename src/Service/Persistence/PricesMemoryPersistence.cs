@@ -26,30 +26,57 @@ namespace Prices.Persistence
             var productId = filter.GetAsNullableString("product_id");
             var partId = filter.GetAsNullableString("part_id");
             var sku = filter.GetAsNullableString("sku");
-            var dateStart = filter.GetAsNullableDateTime("date_start");
-            var dateEnd = filter.GetAsNullableDateTime("date_end");
+            var fromDateStart = filter.GetAsNullableDateTime("from_date_start");
+            var toDateStart = filter.GetAsNullableDateTime("to_date_start");
+            var fromDateEnd = filter.GetAsNullableDateTime("from_date_end");
+            var toDateEnd = filter.GetAsNullableDateTime("to_date_end");
             var promoCode = filter.GetAsNullableString("promo_code");
 
             var skus = filter.GetAsNullableString("skus");
             var skuList = !string.IsNullOrEmpty(skus) ? skus.Split(',') : null;
+            var search = filter.GetAsNullableString("search");
 
             return new List<Func<PriceV1, bool>>
             {
                 (item) =>
                 {
-                    if (id != null && item.Id != id) return false;
-                    if (pricefileId != null && item.PriceFileId != pricefileId) return false;
-                    if (externalRefId != null && item.ExternalRefId != externalRefId) return false;
-                    if (productId != null && item.ProductId != productId) return false;
-                    if (partId != null && item.PartId != partId) return false;
-                    if (sku != null && item.Sku != sku) return false;
-                    if (dateStart != null && item.DateStart != dateStart) return false;
-                    if (dateEnd != null && item.DateEnd != dateEnd) return false;
-                    if (promoCode != null && item.PromoCode != promoCode) return false;
+                    if (!string.IsNullOrWhiteSpace(id) && item.Id != id) return false;
+                    if (!string.IsNullOrWhiteSpace(pricefileId) && item.PriceFileId != pricefileId) return false;
+                    if (!string.IsNullOrWhiteSpace(externalRefId) && item.ExternalRefId != externalRefId) return false;
+                    if (!string.IsNullOrWhiteSpace(productId) && item.ProductId != productId) return false;
+                    if (!string.IsNullOrWhiteSpace(partId) && item.PartId != partId) return false;
+                    if (!string.IsNullOrWhiteSpace(sku) && !item.Sku.Equals(sku, StringComparison.CurrentCultureIgnoreCase)) return false;
+                    if (fromDateStart != null && item.DateStart < fromDateStart) return false;
+                    if (toDateStart != null && item.DateStart > toDateStart) return false;
+                    if (fromDateEnd != null && item.DateEnd < fromDateEnd) return false;
+                    if (toDateEnd != null && item.DateEnd > toDateEnd) return false;
+                    if (!string.IsNullOrWhiteSpace(promoCode) && !item.PromoCode.Equals(promoCode, StringComparison.CurrentCultureIgnoreCase)) return false;
                     if (skuList != null && !skuList.Contains(item.Sku)) return false;
+                    if (!string.IsNullOrWhiteSpace(search) && !MatchSearch(item, search)
+                        //&& item.Id != search
+                        //&& item.PriceFileId != search
+                        //&& item.ProductId != search
+                        //&& item.PartId != search
+                        //&& item.ExternalRefId != search
+                        //&& item.Sku.ToLower() != search
+                        //&& item.PromoCode.ToLower() != search
+                        )
+                        return false;
                     return true;
                 }
             };
+        }
+
+        private bool MatchSearch(PriceV1 item, string search)
+        {
+            return (item.Id != null && item.Id == search) ? true
+                : (item.PriceFileId != null && item.PriceFileId == search) ? true
+                : (item.ProductId != null && item.ProductId == search) ? true
+                : (item.PartId != null && item.PartId == search) ? true
+                : (item.ExternalRefId != null && item.ExternalRefId == search) ? true
+                : (item.Sku != null && item.Sku.Equals(search, StringComparison.CurrentCultureIgnoreCase)) ? true
+                : (item.PromoCode != null && item.PromoCode.Equals(search, StringComparison.CurrentCultureIgnoreCase)) ? true
+                : false;
         }
 
         public async Task<PriceV1> GetOneBySkuAsync(string correlationId, string sku)

@@ -143,8 +143,18 @@ namespace Service.Test.Persistence
             // Create items
             await TestCreatePricesAsync();
 
-            // Filter by id
+            // Get all prices
             var page = await _persistence.GetPageByFilterAsync(
+                null,
+                new FilterParams(),
+                new PagingParams()
+            );
+
+            Assert.NotNull(page);
+            Assert.Equal(3, page.Data.Count);
+
+            // Filter by id
+            page = await _persistence.GetPageByFilterAsync(
                 null,
                 FilterParams.FromTuples(
                     "id", "1"
@@ -220,28 +230,50 @@ namespace Service.Test.Persistence
 
             Assert.Equal(2, page.Data.Count);
 
-            // Filter by date_start
+            // Filter by from_date_start
             page = await _persistence.GetPageByFilterAsync(
                 null,
                 FilterParams.FromTuples(
-                    "date_start", new DateTime(2019, 06, 08)
-                ),
-                new PagingParams()
-            );
-
-            Assert.Single(page.Data);
-
-            // Filter by date_end
-            page = await _persistence.GetPageByFilterAsync(
-                null,
-                FilterParams.FromTuples(
-                    "date_end", new DateTime(2019, 12, 29)
+                    "from_date_start", new DateTime(2019, 01, 01)
                 ),
                 new PagingParams()
             );
 
             Assert.Equal(2, page.Data.Count);
 
+            // Filter by to_date_start
+            page = await _persistence.GetPageByFilterAsync(
+                null,
+                FilterParams.FromTuples(
+                    "to_date_start", new DateTime(2019, 01, 01)
+                ),
+                new PagingParams()
+            );
+
+            Assert.Single(page.Data);
+
+            // Filter by from_date_end
+            page = await _persistence.GetPageByFilterAsync(
+                null,
+                FilterParams.FromTuples(
+                    "from_date_end", new DateTime(2020, 01, 01)
+                ),
+                new PagingParams()
+            );
+
+            Assert.Single(page.Data);
+
+            // Filter by to_date_end
+            page = await _persistence.GetPageByFilterAsync(
+                null,
+                FilterParams.FromTuples(
+                    "to_date_end", new DateTime(2020, 01, 01)
+                ),
+                new PagingParams()
+            );
+
+            Assert.Equal(2, page.Data.Count);
+            
             // Filter by promo_code
             page = await _persistence.GetPageByFilterAsync(
                 null,
@@ -252,6 +284,17 @@ namespace Service.Test.Persistence
             );
 
             Assert.Equal(2, page.Data.Count);
+
+            // Filter by search
+            page = await _persistence.GetPageByFilterAsync(
+                null,
+                FilterParams.FromTuples(
+                    "search", "TREWQ"
+                ),
+                new PagingParams()
+            );
+
+            Assert.Single(page.Data);
         }
     }
 }
