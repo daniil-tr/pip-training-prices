@@ -2,6 +2,7 @@
 using PipServices3.Commons.Data;
 using PipServices3.MongoDb.Persistence;
 using Prices.Data.Version1;
+using System;
 using System.Threading.Tasks;
 
 namespace Prices.Persistence
@@ -55,6 +56,7 @@ namespace Prices.Persistence
                 searchFilter |= builder.Eq(b => b.ExternalRefId, search);
                 searchFilter |= builder.Eq(b => b.Sku, search);
                 searchFilter |= builder.Eq(b => b.PromoCode, search);
+                //searchFilter |= builder.Where(b => b.PromoCode.Equals(search, StringComparison.CurrentCultureIgnoreCase));
                 filter &= searchFilter;
             }
 

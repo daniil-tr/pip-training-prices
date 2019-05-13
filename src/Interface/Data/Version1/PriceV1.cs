@@ -47,9 +47,6 @@ namespace Prices.Data.Version1
         [DataMember(Name = "promo_code")]
         public string PromoCode { get; set; }
 
-        //[DataMember(Name = "priority")]
-        //public int Priority { get; set; }
-
         [DataMember(Name = "priority")]
         public long? Priority { get; set; }
 
