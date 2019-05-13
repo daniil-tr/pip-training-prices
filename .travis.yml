@@ -29,7 +29,7 @@ script:
   - ./package.ps1
   - ./tag.ps1
   - ./publish.ps1
-  - ./release.ps1
+#  - ./release.ps1
 
 after_script:
   - ./clean.ps1
