@@ -72,7 +72,6 @@ namespace Prices.Data.Version1
                    DateStart == v.DateStart &&
                    DateEnd == v.DateEnd &&
                    PromoCode == v.PromoCode &&
-                   //EqualityComparer<int?>.Default.Equals(Priority, v.Priority) &&
                    EqualityComparer<long?>.Default.Equals(Priority, v.Priority) &&
                    Note == v.Note;
             return result;
@@ -94,7 +93,6 @@ namespace Prices.Data.Version1
             hashCode = hashCode * -1521134295 + DateStart.GetHashCode();
             hashCode = hashCode * -1521134295 + DateEnd.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PromoCode);
-            //hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(Priority);
             hashCode = hashCode * -1521134295 + EqualityComparer<long?>.Default.GetHashCode(Priority);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Note);
             return hashCode;
