@@ -25,7 +25,7 @@ install:
 
 script: 
   - ./build.ps1
-#  - ./test.ps1
+  - ./test.ps1
   - ./package.ps1
   - ./tag.ps1
   - ./publish.ps1
